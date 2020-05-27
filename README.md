@@ -105,3 +105,20 @@ pool.on('error', o => {
     console.log('task weight', o.taskWeight);
 });
 ```
+
+- `Pool` can be used as builder pattern:
+
+```js
+new Pool()
+    .handler((a, b) => {
+        console.log(a, b);
+    })
+    .iterator(function* () {
+        const iter = [{ args: [1, 3] }, { args: [2, 4] }];
+        for (let it of iter) {
+            yield it;
+        }
+    })
+    .options({ workers: 2, threads: 2, retries: 2 })
+    .run();
+```
