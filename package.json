@@ -1,0 +1,22 @@
+{
+  "name": "tasks-pool",
+  "version": "1.0.0",
+  "description": "Tiny but light-weight and high-performed library to launch tasks asynchroniously in multiple processes and threads.",
+  "main": "lib/index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/schipiga/tasks-pool.git"
+  },
+  "author": "Sergei Chipiga",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/schipiga/tasks-pool/issues"
+  },
+  "homepage": "https://github.com/schipiga/tasks-pool#readme"
+}
