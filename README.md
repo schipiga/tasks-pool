@@ -9,13 +9,13 @@ const cluster = require('cluster');
 const { Pool } = require("tasks-pool");
 
 const generator = function* () {
-    const g = [{ a: 1 }, { a: 2 }, { a: 3 }] // sequence of named arguments for handler
+    const g = [{ args: [1] }, { args: [2] }, { args: [3] }]; // list of arguments for handler
     for (let i of g) {
         yield i;
     }
 }
 
-const handler = async ({ a }) => { // use named arguments always
+const handler = async a => {
     if (a === 3) throw Error(`Bad value ${a}!`)
     return new Promise(resolve => {
         setTimeout(() => resolve(a), 2000);
@@ -27,7 +27,7 @@ const main = async () => {
     pool.on('success', console.log);
     pool.on('error', console.log);
     await pool.run(); // wait for tasks scheduling
-    if (cluster.isWorker) return; // don't call next code after fork in worker
+    if (cluster.isWorker) return; // don't call next code in worker after fork
     await pool.wait(); // wait for tasks finishing
 }
 
@@ -41,7 +41,7 @@ Options
 
 ```js
 const generator = async function* () {
-    const g = [{ a: 1 }, { a: 2 }, { a: 3 }]
+    const g = [{ args: [1] }, { args: [2] }, { args: [3] }];
     for (let i of g) {
         yield await i;
     }
@@ -52,14 +52,23 @@ const generator = async function* () {
 
 ```js
 const generator = async function* () {
-    const g = [{ taskWeight: 1, a: 1 }, { taskWeight: 2, a: 2 }, { taskWeight:3, a: 3 }]
+    const g = [{ args: [1], weight: 1 }, { args: [2], weight: 2 }, { args: [3], weight: 3 }];
     for (let i of g) {
         yield await i;
     }
 }
 ```
 
-- Don't use `taskWeight` as named argument in handler. It's reserved word and isn't sending to handler.
+- Tasks can have different retries. If not defined then pool `retries` is used:
+
+```js
+const generator = async function* () {
+    const g = [{ args: [1], retries: 1 }, { args: [2], retries: 2 }, { args: [3], retries: 3 }];
+    for (let i of g) {
+        yield await i;
+    }
+}
+```
 
 - `Pool` can receive generator object as well as generator function:
 
@@ -71,16 +80,16 @@ new Pool(handler, generator())
 - `Pool` can receive even sequence as second argument:
 
 ```js
-new Pool(handler, [{ a: 1 }, { a: 2 }])
+new Pool(handler, [{ args: [1] }, { args: [2] }, { args: [3] }])
 ```
 
-- `Pool` second argument should follow iterator protocol - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Iterators_and_Generators
+- `Pool` second argument (if it's not like in above example) should follow iterator protocol - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Iterators_and_Generators
 
 - `Pool` has third argument - named options: `{ workers, threads, retries }`:
 
     - `workers` - number of worker processes. By default is cpus number. If `0` no workers are folked and tasks are executed in master process.
     - `threads` - number of threads on worker (threads are organised via JavaScript async/await, native Node.js threads aren't used). By default is cpus number. Should `1` mininum.
-    - `retries` - number of retries for task if it's failed. By default is `0`.
+    - `retries` - number of retries for task if it's failed. By default is `0`. Can be overwritten by task `retries`.
 
 - `Pool` raises events on task `success` or `error`.
 
