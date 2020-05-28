@@ -17,16 +17,16 @@ const cluster = require('cluster');
 const { Pool } = require("tasks-pool");
 
 const generator = function* () {
-    const g = [{ args: [1] }, { args: [2] }, { args: [3] }]; // list of arguments for handler
-    for (let i of g) {
-        yield i;
+    const items = [{ args: [1] }, { args: [2] }, { args: [3] }]; // list of arguments for handler
+    for (const item of items) {
+        yield item;
     }
 }
 
-const handler = async a => {
-    if (a === 3) throw Error(`Bad value ${a}!`)
+const handler = val => {
+    if (val === 3) throw Error(`Bad value ${val}!`)
     return new Promise(resolve => {
-        setTimeout(() => resolve(a), 2000);
+        setTimeout(() => resolve(val), 2000);
     });
 }
 
@@ -49,9 +49,9 @@ Options
 
 ```js
 const generator = async function* () {
-    const g = [{ args: [1] }, { args: [2] }, { args: [3] }];
-    for (let i of g) {
-        yield await i;
+    const items = [{ args: [1] }, { args: [2] }, { args: [3] }];
+    for (const item of items) {
+        yield await item;
     }
 }
 ```
@@ -60,9 +60,9 @@ const generator = async function* () {
 
 ```js
 const generator = async function* () {
-    const g = [{ args: [1], weight: 1 }, { args: [2], weight: 2 }, { args: [3], weight: 3 }];
-    for (let i of g) {
-        yield await i;
+    const items = [{ args: [1], weight: 1 }, { args: [2], weight: 2 }, { args: [3], weight: 3 }];
+    for (const item of items) {
+        yield await item;
     }
 }
 ```
@@ -71,9 +71,9 @@ const generator = async function* () {
 
 ```js
 const generator = async function* () {
-    const g = [{ args: [1], retries: 1 }, { args: [2], retries: 2 }, { args: [3], retries: 3 }];
-    for (let i of g) {
-        yield await i;
+    const items = [{ args: [1], retries: 1 }, { args: [2], retries: 2 }, { args: [3], retries: 3 }];
+    for (const item of items) {
+        yield await item;
     }
 }
 ```
@@ -95,7 +95,7 @@ new Pool(handler, [{ args: [1] }, { args: [2] }, { args: [3] }])
 
 - `Pool` has third argument - named options: `{ workers, threads, retries, ha }`:
 
-    - `workers` - number of worker processes. By default is cpus number. If `0` no workers are folked and tasks are executed in master process.
+    - `workers` - number of worker processes. By default is cpus number. If `0` no workers are forked and tasks are executed in master process.
     - `threads` - number of threads on worker (threads are organised via JavaScript async/await, native Node.js threads aren't used). By default is cpus number. Should `1` mininum.
     - `retries` - number of retries for task if it's failed. By default is `0`. Can be overwritten by task `retries`.
     - `ha` - Pass `true` if want to provide high-availability and to restart worker if it's finished suddenly. By default is `false`.
@@ -103,19 +103,19 @@ new Pool(handler, [{ args: [1] }, { args: [2] }, { args: [3] }])
 - `Pool` raises events on task `success` or `error`.
 
 ```js
-pool.on('success', o => {
-    console.log('task arguments', o.args);
-    console.log('task result', o.result);
-    console.log('task weight', o.weight);
-    console.log('task max retries', o.retries);
-    console.log('task was retried', o.retried);
+pool.on('success', obj => {
+    console.log('task arguments', obj.args);
+    console.log('task result', obj.result);
+    console.log('task weight', obj.weight);
+    console.log('task max retries', obj.retries);
+    console.log('task was retried', obj.retried);
 });
-pool.on('error', o => {
-    console.log('task arguments', o.args);
-    console.log('task error stack trace', o.error);
-    console.log('task weight', o.weight);
-    console.log('task max retries', o.retries);
-    console.log('task was retried', o.retried);
+pool.on('error', obj => {
+    console.log('task arguments', obj.args);
+    console.log('task error stack trace', obj.error);
+    console.log('task weight', obj.weight);
+    console.log('task max retries', obj.retries);
+    console.log('task was retried', obj.retried);
 });
 ```
 
@@ -128,7 +128,7 @@ new Pool()
     })
     .iterator(function* () {
         const iter = [{ args: [1, 3] }, { args: [2, 4] }];
-        for (let it of iter) {
+        for (const it of iter) {
             yield it;
         }
     })
