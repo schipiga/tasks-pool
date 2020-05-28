@@ -3,6 +3,14 @@
 Quick Start
 ===========
 
+install:
+
+```
+npm i tasks-pool
+```
+
+use:
+
 ```js
 const cluster = require('cluster');
 
@@ -85,11 +93,12 @@ new Pool(handler, [{ args: [1] }, { args: [2] }, { args: [3] }])
 
 - `Pool` second argument (if it's not like in above example) should follow iterator protocol - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Iterators_and_Generators
 
-- `Pool` has third argument - named options: `{ workers, threads, retries }`:
+- `Pool` has third argument - named options: `{ workers, threads, retries, ha }`:
 
     - `workers` - number of worker processes. By default is cpus number. If `0` no workers are folked and tasks are executed in master process.
     - `threads` - number of threads on worker (threads are organised via JavaScript async/await, native Node.js threads aren't used). By default is cpus number. Should `1` mininum.
     - `retries` - number of retries for task if it's failed. By default is `0`. Can be overwritten by task `retries`.
+    - `ha` - Pass `true` if want to provide high-availability and to restart worker if it's finished suddenly. By default is `false`.
 
 - `Pool` raises events on task `success` or `error`.
 
@@ -97,12 +106,16 @@ new Pool(handler, [{ args: [1] }, { args: [2] }, { args: [3] }])
 pool.on('success', o => {
     console.log('task arguments', o.args);
     console.log('task result', o.result);
-    console.log('task weight', o.taskWeight);
+    console.log('task weight', o.weight);
+    console.log('task max retries', o.retries);
+    console.log('task was retried', o.retried);
 });
 pool.on('error', o => {
     console.log('task arguments', o.args);
     console.log('task error stack trace', o.error);
-    console.log('task weight', o.taskWeight);
+    console.log('task weight', o.weight);
+    console.log('task max retries', o.retries);
+    console.log('task was retried', o.retried);
 });
 ```
 
