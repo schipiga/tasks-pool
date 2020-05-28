@@ -1,6 +1,6 @@
 {
   "name": "tasks-pool",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Tiny but light-weight and high-performed library to launch tasks asynchroniously in multiple processes and threads.",
   "main": "lib/index.js",
   "directories": {
@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/schipiga/tasks-pool/issues"
   },
-  "homepage": "https://github.com/schipiga/tasks-pool#readme"
+  "homepage": "https://github.com/schipiga/tasks-pool#readme",
+  "dependencies": {
+    "deep-equal": "^2.0.3"
+  }
 }

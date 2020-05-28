@@ -90,6 +90,7 @@ new Pool(handler, [{ args: [1] }, { args: [2] }, { args: [3] }])
     - `workers` - number of worker processes. By default is cpus number. If `0` no workers are folked and tasks are executed in master process.
     - `threads` - number of threads on worker (threads are organised via JavaScript async/await, native Node.js threads aren't used). By default is cpus number. Should `1` mininum.
     - `retries` - number of retries for task if it's failed. By default is `0`. Can be overwritten by task `retries`.
+    - `ha` - Pass `true` if want to provide high-availability and to restart worker if it's finished suddenly. By default is `false`.
 
 - `Pool` raises events on task `success` or `error`.
 
