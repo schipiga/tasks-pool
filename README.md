@@ -96,26 +96,26 @@ new Pool(handler, [{ args: [1] }, { args: [2] }, { args: [3] }])
 - `Pool` has third argument - named options: `{ workers, threads, retries, ha }`:
 
     - `workers` - number of worker processes. By default is cpus number. If `0` no workers are forked and tasks are executed in master process.
-    - `threads` - number of threads on worker (threads are organised via JavaScript async/await, native Node.js threads aren't used). By default is cpus number. Should `1` mininum.
+    - `threads` - number of threads on worker (threads are organised via JavaScript async/await, native Node.js threads aren't used). By default is cpus number. Should be `1` minimum.
     - `retries` - number of retries for task if it's failed. By default is `0`. Can be overwritten by task `retries`.
     - `ha` - Pass `true` if want to provide high-availability and to restart worker if it's finished suddenly. By default is `false`.
 
 - `Pool` raises events on task `success` or `error`.
 
 ```js
-pool.on('success', obj => {
-    console.log('task arguments', obj.args);
-    console.log('task result', obj.result);
-    console.log('task weight', obj.weight);
-    console.log('task max retries', obj.retries);
-    console.log('task was retried', obj.retried);
+pool.on('success', task => {
+    console.log('task arguments', task.args);
+    console.log('task result', task.result);
+    console.log('task weight', task.weight);
+    console.log('task max retries', task.retries);
+    console.log('task was retried', task.retried);
 });
-pool.on('error', obj => {
-    console.log('task arguments', obj.args);
-    console.log('task error stack trace', obj.error);
-    console.log('task weight', obj.weight);
-    console.log('task max retries', obj.retries);
-    console.log('task was retried', obj.retried);
+pool.on('error', task => {
+    console.log('task arguments', task.args);
+    console.log('task error stack trace', task.error);
+    console.log('task weight', task.weight);
+    console.log('task max retries', task.retries);
+    console.log('task was retried', task.retried);
 });
 ```
 
