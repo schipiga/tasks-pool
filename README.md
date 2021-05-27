@@ -12,8 +12,6 @@ npm i tasks-pool
 use:
 
 ```js
-const cluster = require('cluster');
-
 const { Pool } = require("tasks-pool");
 
 const generator = function* () {
@@ -35,7 +33,6 @@ const main = async () => {
     pool.on('success', console.log);
     pool.on('error', console.log);
     await pool.run(); // wait for tasks scheduling
-    if (cluster.isWorker) return; // don't call next code in worker after fork
     await pool.wait(); // wait for tasks finishing
 }
 
